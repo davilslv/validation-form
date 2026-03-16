@@ -587,7 +587,7 @@ const sections = [
   // ── SECTION 1: SOBRE VOCÊ ──
   { type: 'text', sectionLabel: 'Sobre você', qNum: 1, question: 'Qual é a sua especialidade e área de atuação principal?', hint: 'Ex: Genética médica clínica, oncogenética, genética perinatal, doenças raras...', required: true, key: 'specialty' },
 
-  { type: 'radio', sectionLabel: 'Sobre você', qNum: 2, question: 'Em que tipo de instituição você trabalha?', required: true, key: 'institution', options: ['Consultório particular', 'Clínica especializada', 'Hospital privado', 'Hospital universitário / público', 'Laboratório de genética', 'SUS (ambulatório)', 'Outro'], followUp: { trigger: 'Outro', type: 'text', hint: 'Especifique o tipo de instituição', key: 'institution_other' } },
+  { type: 'checkbox', sectionLabel: 'Sobre você', qNum: 2, question: 'Em que tipo(s) de instituição você trabalha?', hint: 'Selecione todas que se aplicam.', required: true, key: 'institution', options: ['Consultório particular', 'Clínica especializada', 'Hospital privado', 'Hospital universitário / público', 'Laboratório de genética', 'SUS (ambulatório)', 'Outro'] },
 
   { type: 'number', sectionLabel: 'Sobre você', qNum: 3, question: 'Quantos pacientes você atende por semana, em média?', hint: null, required: true, key: 'patients_week' },
 
@@ -597,9 +597,11 @@ const sections = [
   {
     type: 'statement',
     sectionLabel: 'As dores que identificamos',
+    key: 'pain_ranking',
+    required: true,
     content: `
       <div class="statement">
-        Identificamos 5 dores recorrentes na rotina de geneticistas clínicos. Gostaríamos que você avaliasse se fazem sentido na sua realidade.
+        Identificamos 5 dores recorrentes na rotina de geneticistas clínicos. Ordene da <strong>MAIS intensa</strong> para a <strong>MENOS intensa</strong> na sua rotina.
       </div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <div class="option" style="cursor:default; border-color:var(--border);">
@@ -623,31 +625,33 @@ const sections = [
           <div><strong>Geração de laudos de aconselhamento é repetitiva</strong><br><span style="font-size:13px; color:var(--light);">Tempo consumido escrevendo laudos que poderia ir para o paciente.</span></div>
         </div>
       </div>
+      <div style="margin-top:20px;">
+        <label class="question-label" style="font-size:14px; color:var(--medium);">Use os números: 1, 2, 3, 4, 5 (ex: "2, 1, 3, 5, 4")</label>
+        <textarea class="input-field" rows="2" placeholder="Ex: 2, 1, 3, 5, 4" oninput="responses.pain_ranking=this.value" style="margin-top:8px;">${responses.pain_ranking || ''}</textarea>
+      </div>
     `
   },
 
-  { type: 'textarea', sectionLabel: 'Validação das dores', qNum: 5, question: 'Ordene essas dores da MAIS intensa para a MENOS intensa na sua rotina.', hint: 'Use os números: 1, 2, 3, 4, 5 (ex: "2, 1, 3, 5, 4")', required: true, key: 'pain_ranking' },
+  { type: 'textarea', sectionLabel: 'Validação das dores', qNum: 5, question: 'Existe alguma dor importante que NÃO listamos?', hint: 'O que mais consome seu tempo ou gera frustração na rotina clínica?', required: false, key: 'pain_missing' },
 
-  { type: 'textarea', sectionLabel: 'Validação das dores', qNum: 6, question: 'Existe alguma dor importante que NÃO listamos?', hint: 'O que mais consome seu tempo ou gera frustração na rotina clínica?', required: false, key: 'pain_missing' },
+  { type: 'text', sectionLabel: 'Validação das dores', qNum: 6, question: 'Quanto do seu tempo por paciente é gasto em tarefas administrativas vs. raciocínio clínico?', hint: 'Ex: 40% administrativo, 60% clínico', required: true, key: 'admin_vs_clinical' },
 
-  { type: 'text', sectionLabel: 'Validação das dores', qNum: 7, question: 'Quanto do seu tempo por paciente é gasto em tarefas administrativas vs. raciocínio clínico?', hint: 'Ex: 40% administrativo, 60% clínico', required: true, key: 'admin_vs_clinical' },
-
-  { type: 'textarea', sectionLabel: 'Validação das dores', qNum: 8, question: 'Você já deixou de considerar uma hipótese diagnóstica por falta de tempo para pesquisar?', hint: 'Se sim, pode descrever brevemente a situação?', required: false, key: 'missed_hypothesis' },
+  { type: 'textarea', sectionLabel: 'Validação das dores', qNum: 7, question: 'Você já deixou de considerar uma hipótese diagnóstica por falta de tempo para pesquisar?', hint: 'Se sim, pode descrever brevemente a situação?', required: false, key: 'missed_hypothesis' },
 
   // ── SECTION 3: FERRAMENTAS ATUAIS ──
-  { type: 'checkbox', sectionLabel: 'Ferramentas atuais', qNum: 9, question: 'Quais ferramentas/softwares você usa na rotina clínica?', hint: 'Selecione todas que se aplicam.', required: true, key: 'current_tools', options: ['Prontuário eletrônico (PEP)', 'OMIM', 'PubMed', 'ClinVar', 'GeneReviews', 'Orphanet', 'Phenomizer / PhenoTips', 'Franklin (QIAGEN)', 'Face2Gene', 'Planilhas (Excel/Sheets)', 'ChatGPT / Gemini / IA genérica', 'Papel / caderno', 'Outro'] },
+  { type: 'checkbox', sectionLabel: 'Ferramentas atuais', qNum: 8, question: 'Quais ferramentas/softwares você usa na rotina clínica?', hint: 'Selecione todas que se aplicam.', required: true, key: 'current_tools', options: ['Prontuário eletrônico (PEP)', 'OMIM', 'PubMed', 'ClinVar', 'GeneReviews', 'Orphanet', 'Phenomizer / PhenoTips', 'Franklin (QIAGEN)', 'Face2Gene', 'Planilhas (Excel/Sheets)', 'ChatGPT / Gemini / IA genérica', 'Papel / caderno', 'Outro'] },
 
-  { type: 'checkbox', sectionLabel: 'Ferramentas atuais', qNum: 10, question: 'Como você recebe os laudos dos laboratórios hoje?', required: true, key: 'lab_report_format', options: ['PDF por e-mail', 'Portal online do laboratório', 'Arquivo VCF', 'Papel físico / correio', 'Integração com prontuário eletrônico', 'Outro'] },
+  { type: 'checkbox', sectionLabel: 'Ferramentas atuais', qNum: 9, question: 'Como você recebe os laudos dos laboratórios hoje?', required: true, key: 'lab_report_format', options: ['PDF por e-mail', 'Portal online do laboratório', 'Arquivo VCF', 'Papel físico / correio', 'Integração com prontuário eletrônico', 'Outro'] },
 
-  { type: 'textarea', sectionLabel: 'Ferramentas atuais', qNum: 11, question: 'Quando o laudo chega, qual é o seu fluxo para correlacionar as variantes com o quadro clínico?', hint: 'Ex: abre OMIM, ClinVar e PubMed em abas separadas, anota no prontuário, consulta colegas...', required: true, key: 'post_report_workflow' },
+  { type: 'textarea', sectionLabel: 'Ferramentas atuais', qNum: 10, question: 'Quando o laudo chega, qual é o seu fluxo para correlacionar as variantes com o quadro clínico?', hint: 'Ex: abre OMIM, ClinVar e PubMed em abas separadas, anota no prontuário, consulta colegas...', required: true, key: 'post_report_workflow' },
 
-  { type: 'radio', sectionLabel: 'Ferramentas atuais', qNum: 12, question: 'Você usa alguma ferramenta de IA no contexto clínico?', required: true, key: 'uses_ai', options: ['Sim, regularmente', 'Sim, ocasionalmente', 'Já experimentei mas parei', 'Nunca usei'], followUp: { trigger: ['Sim, regularmente', 'Sim, ocasionalmente', 'Já experimentei mas parei'], type: 'textarea', hint: 'Para quê usa/usou? O que funciona e o que não funciona?', key: 'ai_details' } },
+  { type: 'radio', sectionLabel: 'Ferramentas atuais', qNum: 11, question: 'Você usa alguma ferramenta de IA no contexto clínico?', required: true, key: 'uses_ai', options: ['Sim, regularmente', 'Sim, ocasionalmente', 'Já experimentei mas parei', 'Nunca usei'], followUp: { trigger: ['Sim, regularmente', 'Sim, ocasionalmente', 'Já experimentei mas parei'], type: 'textarea', hint: 'Para quê usa/usou? O que funciona e o que não funciona?', key: 'ai_details' } },
 
-  { type: 'textarea', sectionLabel: 'Ferramentas atuais', qNum: 13, question: 'O que você mais gosta nas ferramentas que usa hoje?', required: false, key: 'tools_likes' },
+  { type: 'textarea', sectionLabel: 'Ferramentas atuais', qNum: 12, question: 'O que você mais gosta nas ferramentas que usa hoje?', required: false, key: 'tools_likes' },
 
-  { type: 'textarea', sectionLabel: 'Ferramentas atuais', qNum: 14, question: 'O que mais te frustra nas ferramentas atuais?', hint: 'Lentidão, falta de integração, interface confusa, custo, etc.', required: false, key: 'tools_frustrations' },
+  { type: 'textarea', sectionLabel: 'Ferramentas atuais', qNum: 13, question: 'O que mais te frustra nas ferramentas atuais?', hint: 'Lentidão, falta de integração, interface confusa, custo, etc.', required: false, key: 'tools_frustrations' },
 
-  { type: 'radio', sectionLabel: 'Ferramentas atuais', qNum: 15, question: 'Você já pagou por algum software específico para genética?', required: true, key: 'paid_software', options: ['Sim', 'Não'], followUp: { trigger: 'Sim', type: 'text', hint: 'Qual software e quanto paga/pagou?', key: 'paid_software_details' } },
+  { type: 'radio', sectionLabel: 'Ferramentas atuais', qNum: 14, question: 'Você já pagou por algum software específico para genética?', required: true, key: 'paid_software', options: ['Sim', 'Não'], followUp: { trigger: 'Sim', type: 'text', hint: 'Qual software e quanto paga/pagou?', key: 'paid_software_details' } },
 
   // ── SECTION 4: A IDEIA ──
   {
@@ -673,36 +677,36 @@ const sections = [
     `
   },
 
-  { type: 'scale', sectionLabel: 'Feedback sobre a solução', qNum: 16, question: 'De 1 a 10, qual o seu interesse em uma ferramenta como essa?', hint: null, required: true, key: 'interest_score', min: 1, max: 10, labelMin: 'Nenhum interesse', labelMax: 'Problema real e urgente' },
+  { type: 'scale', sectionLabel: 'Feedback sobre a solução', qNum: 15, question: 'De 1 a 10, qual o seu interesse em uma ferramenta como essa?', hint: null, required: true, key: 'interest_score', min: 1, max: 10, labelMin: 'Nenhum interesse', labelMax: 'Problema real e urgente' },
 
-  { type: 'textarea', sectionLabel: 'Feedback sobre a solução', qNum: 17, question: 'Qual funcionalidade te interessou MAIS? E qual MENOS?', required: true, key: 'feature_ranking' },
+  { type: 'textarea', sectionLabel: 'Feedback sobre a solução', qNum: 16, question: 'Qual funcionalidade te interessou MAIS? E qual MENOS?', required: true, key: 'feature_ranking' },
 
-  { type: 'textarea', sectionLabel: 'Feedback sobre a solução', qNum: 18, question: 'Existe alguma funcionalidade que você sente falta nessa lista?', hint: 'Algo que faria você pensar: "se tivesse isso, eu usaria com certeza."', required: false, key: 'feature_missing' },
+  { type: 'textarea', sectionLabel: 'Feedback sobre a solução', qNum: 17, question: 'Existe alguma funcionalidade que você sente falta nessa lista?', hint: 'Algo que faria você pensar: "se tivesse isso, eu usaria com certeza."', required: false, key: 'feature_missing' },
 
-  { type: 'textarea', sectionLabel: 'Feedback sobre a solução', qNum: 19, question: 'A importação inteligente de laudos (PDF → extração automática) seria útil? Quais labs você mais usa?', hint: 'Ex: Mendelics, Fleury, Dasa, GeneDx, lab do hospital...', required: true, key: 'lab_import_feedback' },
+  { type: 'textarea', sectionLabel: 'Feedback sobre a solução', qNum: 18, question: 'A importação inteligente de laudos (PDF → extração automática) seria útil? Quais labs você mais usa?', hint: 'Ex: Mendelics, Fleury, Dasa, GeneDx, lab do hospital...', required: true, key: 'lab_import_feedback' },
 
-  { type: 'checkbox', sectionLabel: 'Feedback sobre a solução', qNum: 20, question: 'Quais bases de dados são inegociáveis para embasar sugestões de IA?', required: true, key: 'required_databases', options: ['OMIM', 'ClinVar', 'PubMed', 'GeneReviews', 'Orphanet', 'ClinGen', 'gnomAD', 'DECIPHER', 'HGMD', 'Outra'] },
+  { type: 'checkbox', sectionLabel: 'Feedback sobre a solução', qNum: 19, question: 'Quais bases de dados são inegociáveis para embasar sugestões de IA?', required: true, key: 'required_databases', options: ['OMIM', 'ClinVar', 'PubMed', 'GeneReviews', 'Orphanet', 'ClinGen', 'gnomAD', 'DECIPHER', 'HGMD', 'Outra'] },
 
-  { type: 'radio', sectionLabel: 'Feedback sobre a solução', qNum: 21, question: 'Você confiaria em sugestões de IA para apoiar seu raciocínio clínico?', required: true, key: 'ai_trust', options: ['Sim, para a maioria das tarefas', 'Sim, mas só para triagem/priorização', 'Sim, mas só para literatura e resumos', 'Teria reservas significativas', 'Não confiaria'], followUp: { trigger: ['Sim, para a maioria das tarefas', 'Sim, mas só para triagem/priorização', 'Sim, mas só para literatura e resumos', 'Teria reservas significativas'], type: 'textarea', hint: 'Em quais contextos confiaria e em quais não?', key: 'ai_trust_details' } },
+  { type: 'radio', sectionLabel: 'Feedback sobre a solução', qNum: 20, question: 'Você confiaria em sugestões de IA para apoiar seu raciocínio clínico?', required: true, key: 'ai_trust', options: ['Sim, para a maioria das tarefas', 'Sim, mas só para triagem/priorização', 'Sim, mas só para literatura e resumos', 'Teria reservas significativas', 'Não confiaria'], followUp: { trigger: ['Sim, para a maioria das tarefas', 'Sim, mas só para triagem/priorização', 'Sim, mas só para literatura e resumos', 'Teria reservas significativas'], type: 'textarea', hint: 'Em quais contextos confiaria e em quais não?', key: 'ai_trust_details' } },
 
-  { type: 'radio', sectionLabel: 'Feedback sobre a solução', qNum: 22, question: 'O heredograma digital seria útil para você?', required: true, key: 'pedigree_useful', options: ['Sim, muito útil', 'Útil, mas não essencial', 'Indiferente', 'Não seria útil'], followUp: { trigger: ['Sim, muito útil', 'Útil, mas não essencial'], type: 'text', hint: 'Que ferramenta usa para heredograma hoje?', key: 'pedigree_tool' } },
+  { type: 'radio', sectionLabel: 'Feedback sobre a solução', qNum: 21, question: 'O heredograma digital seria útil para você?', required: true, key: 'pedigree_useful', options: ['Sim, muito útil', 'Útil, mas não essencial', 'Indiferente', 'Não seria útil'], followUp: { trigger: ['Sim, muito útil', 'Útil, mas não essencial'], type: 'text', hint: 'Que ferramenta usa para heredograma hoje?', key: 'pedigree_tool' } },
 
   // ── SECTION 5: INTEGRAÇÃO ──
-  { type: 'radio', sectionLabel: 'Integração e Segurança', qNum: 23, question: 'A ferramenta precisaria se integrar ao sistema que você já usa?', required: true, key: 'integration_need', options: ['Sim, integração via API é obrigatória', 'Preferiria integração, mas usaria como paralela', 'Usaria como plataforma separada sem problemas'] },
+  { type: 'radio', sectionLabel: 'Integração e Segurança', qNum: 22, question: 'A ferramenta precisaria se integrar ao sistema que você já usa?', required: true, key: 'integration_need', options: ['Sim, integração via API é obrigatória', 'Preferiria integração, mas usaria como paralela', 'Usaria como plataforma separada sem problemas'] },
 
-  { type: 'radio', sectionLabel: 'Integração e Segurança', qNum: 24, question: 'Qual o nível de exigência da sua instituição em relação à privacidade de dados ao usar IA?', required: true, key: 'privacy_requirement', options: ['Processamento 100% local (sem nuvem)', 'Nuvem brasileira com conformidade LGPD', 'Nuvem internacional com DPA assinado', 'Não sei / nunca foi discutido', 'Outro'], followUp: { trigger: 'Outro', type: 'text', hint: 'Especifique a exigência de privacidade', key: 'privacy_other' } },
+  { type: 'radio', sectionLabel: 'Integração e Segurança', qNum: 23, question: 'Qual o nível de exigência da sua instituição em relação à privacidade de dados ao usar IA?', required: true, key: 'privacy_requirement', options: ['Processamento 100% local (sem nuvem)', 'Nuvem brasileira com conformidade LGPD', 'Nuvem internacional com DPA assinado', 'Não sei / nunca foi discutido', 'Outro'], followUp: { trigger: 'Outro', type: 'text', hint: 'Especifique a exigência de privacidade', key: 'privacy_other' } },
 
   // ── SECTION 6: NEGÓCIO ──
-  { type: 'radio', sectionLabel: 'Modelo de negócio', qNum: 25, question: 'Quanto estaria disposto(a) a pagar por mês por uma ferramenta assim?', required: true, key: 'willingness_to_pay', options: ['Até R$ 200/mês', 'R$ 200 – 500/mês', 'R$ 500 – 1.000/mês', 'R$ 1.000 – 2.000/mês', 'Acima de R$ 2.000/mês', 'Não pagaria'] },
+  { type: 'radio', sectionLabel: 'Modelo de negócio', qNum: 24, question: 'Quanto estaria disposto(a) a pagar por mês por uma ferramenta assim?', required: true, key: 'willingness_to_pay', options: ['Até R$ 200/mês', 'R$ 200 – 500/mês', 'R$ 500 – 1.000/mês', 'R$ 1.000 – 2.000/mês', 'Acima de R$ 2.000/mês', 'Não pagaria'] },
 
-  { type: 'radio', sectionLabel: 'Modelo de negócio', qNum: 26, question: 'Quem toma a decisão de compra de software na sua instituição?', required: true, key: 'purchase_decision', options: ['Eu mesmo(a)', 'Coordenação médica', 'Diretoria / gestão', 'TI da instituição', 'Licitação / processo público', 'Outro'], followUp: { trigger: 'Outro', type: 'text', hint: 'Especifique quem decide', key: 'purchase_decision_other' } },
+  { type: 'radio', sectionLabel: 'Modelo de negócio', qNum: 25, question: 'Quem toma a decisão de compra de software na sua instituição?', required: true, key: 'purchase_decision', options: ['Eu mesmo(a)', 'Coordenação médica', 'Diretoria / gestão', 'TI da instituição', 'Licitação / processo público', 'Outro'], followUp: { trigger: 'Outro', type: 'text', hint: 'Especifique quem decide', key: 'purchase_decision_other' } },
 
-  { type: 'textarea', sectionLabel: 'Modelo de negócio', qNum: 27, question: 'O que te faria testar esse produto? E o que te faria parar de usar?', hint: 'Ex: indicação de colega, trial gratuito, publicação científica, etc.', required: false, key: 'adoption_triggers' },
+  { type: 'textarea', sectionLabel: 'Modelo de negócio', qNum: 26, question: 'O que te faria testar esse produto? E o que te faria parar de usar?', hint: 'Ex: indicação de colega, trial gratuito, publicação científica, etc.', required: false, key: 'adoption_triggers' },
 
-  { type: 'radio', sectionLabel: 'Modelo de negócio', qNum: 28, question: 'Preferência de plataforma?', required: true, key: 'platform_preference', options: ['Web (navegador)', 'App mobile', 'App desktop', 'Tanto faz'] },
+  { type: 'radio', sectionLabel: 'Modelo de negócio', qNum: 27, question: 'Preferência de plataforma?', required: true, key: 'platform_preference', options: ['Web (navegador)', 'App mobile', 'App desktop', 'Tanto faz'] },
 
   // ── SECTION 7: ABERTO ──
-  { type: 'textarea', sectionLabel: 'Espaço aberto', qNum: 29, question: 'Há algo mais que gostaria de compartilhar?', hint: 'Críticas, sugestões, preocupações — qualquer coisa é valiosa.', required: false, key: 'open_feedback' },
+  { type: 'textarea', sectionLabel: 'Espaço aberto', qNum: 28, question: 'Há algo mais que gostaria de compartilhar?', hint: 'Críticas, sugestões, preocupações — qualquer coisa é valiosa.', required: false, key: 'open_feedback' },
 
   // ── CONTATO ──
   { type: 'contact', sectionLabel: 'Seus dados', question: 'Para enviarmos os resultados e próximos passos:', required: true },
@@ -759,7 +763,7 @@ function render() {
       </div>
     `;
   } else {
-    if (s.qNum) html += `<div class="question-number">Pergunta ${s.qNum} de 29</div>`;
+    if (s.qNum) html += `<div class="question-number">Pergunta ${s.qNum} de 28</div>`;
     html += `<div class="question-text">${s.question}</div>`;
     if (s.hint) html += `<div class="question-hint">${s.hint}</div>`;
     if (!s.hint) html += `<div style="height:16px;"></div>`;
@@ -896,7 +900,10 @@ function navigate(dir) {
 
 function validate() {
   const s = sections[currentSection];
-  if (s.type === 'statement' || s.type === 'thankyou') return true;
+  if (s.type === 'statement' || s.type === 'thankyou') {
+    if (s.key && s.required) return !!responses[s.key];
+    return true;
+  }
   if (!s.required) return true;
   if (s.type === 'contact') {
     if (!responses.contact_name || !responses.contact_email) return false;
