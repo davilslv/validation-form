@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeneAI — Pesquisa de Validação</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #1A56DB;
+  --primary-light: #EBF1FF;
+  --primary-hover: #1548C0;
+  --accent: #0E9F6E;
+  --accent-light: #DEF7EC;
+  --dark: #111928;
+  --medium: #4B5563;
+  --light: #9CA3AF;
+  --border: #E5E7EB;
+  --bg: #FAFBFC;
+  --card: #FFFFFF;
+  --error: #E02424;
+  --radius: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--dark);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Progress Bar ── */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--primary);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+}
+
+/* ── Header ── */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(250,251,252,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 50;
+}
+
+.header-brand {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+
+.header-progress-text {
+  font-size: 13px;
+  color: var(--light);
+  font-weight: 400;
+}
+
+/* ── Container ── */
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 100px 24px 120px;
+  min-height: 100vh;
+}
+
+/* ── Sections ── */
+.section {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+
+.section.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Section Label ── */
+.section-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+/* ── Question ── */
+.question-number {
+  font-size: 13px;
+  color: var(--light);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.question-text {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--dark);
+  line-height: 1.35;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.question-hint {
+  font-size: 14px;
+  color: var(--light);
+  line-height: 1.5;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+/* ── Inputs ── */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: inherit;
+  font-size: 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--dark);
+  transition: all 0.2s;
+  outline: none;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--light);
+}
+
+/* ── Radio / Checkbox options ── */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--card);
+  font-size: 15px;
+  color: var(--medium);
+  line-height: 1.4;
+}
+
+.option:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.option.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--dark);
+  font-weight: 500;
+}
+
+.option input { display: none; }
+
+.option .check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.option.checkbox-option .check {
+  border-radius: 5px;
+}
+
+.option.selected .check {
+  border-color: var(--primary);
+  background: var(--primary);
+}
+
+.option.selected .check::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+}
+
+.option.checkbox-option.selected .check::after {
+  border-radius: 2px;
+  width: 10px;
+  height: 10px;
+  background: none;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  width: 6px;
+  height: 10px;
+  transform: rotate(-45deg) translate(1px, -1px);
+  border-radius: 0;
+}
+
+/* ── Scale ── */
+.scale-container {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.scale-option {
+  flex: 1;
+  min-width: 44px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--medium);
+  background: var(--card);
+  transition: all 0.15s;
+}
+
+.scale-option:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.scale-option.selected {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--light);
+}
+
+/* ── Statement blocks ── */
+.statement {
+  padding: 28px 24px;
+  background: var(--primary-light);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--primary);
+  margin-bottom: 24px;
+  line-height: 1.7;
+  font-size: 15px;
+  color: var(--dark);
+}
+
+.statement strong {
+  color: var(--primary);
+}
+
+.statement-features {
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+}
+
+.feature-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.feature-item:last-child { border-bottom: none; }
+
+.feature-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+
+.feature-name {
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 2px;
+}
+
+.feature-desc {
+  color: var(--medium);
+  font-size: 13px;
+}
+
+.warning-box {
+  padding: 16px 20px;
+  background: var(--accent-light);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--dark);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* ── Buttons ── */
+.nav-buttons {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 24px;
+  background: rgba(250,251,252,0.9);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 50;
+}
+
+.nav-buttons-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn {
+  padding: 12px 28px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--medium);
+  border: 1.5px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-ghost {
+  background: none;
+  color: var(--light);
+  border: none;
+  font-weight: 500;
+}
+
+.btn-ghost:hover { color: var(--primary); }
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Thank You ── */
+.thank-you {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.thank-you h2 {
+  font-size: 28px;
+  color: var(--primary);
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.thank-you p {
+  font-size: 16px;
+  color: var(--medium);
+  line-height: 1.6;
+  max-width: 400px;
+  margin: 0 auto 32px;
+}
+
+.btn-export {
+  background: var(--accent);
+  color: white;
+  padding: 14px 32px;
+  font-size: 15px;
+}
+
+.btn-export:hover {
+  background: #0C8C60;
+}
+
+/* ── Other field ── */
+.other-field {
+  margin-top: 8px;
+  display: none;
+}
+
+.other-field.visible { display: block; }
+
+/* ── Validation Error ── */
+.error-message {
+  color: var(--error);
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #FDE8E8;
+  border-radius: 8px;
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.error-message.visible { display: block; }
+
+/* ── Loading overlay ── */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(250,251,252,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loading-overlay.visible { display: flex; }
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  font-size: 15px;
+  color: var(--medium);
+  font-weight: 500;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .question-text { font-size: 19px; }
+  .container { padding: 90px 16px 110px; }
+  .scale-container { gap: 4px; }
+  .scale-option { min-width: 36px; height: 42px; font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Enviando suas respostas...</div>
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="header">
+  <div class="header-brand">GeneAI</div>
+  <div class="header-progress-text" id="progressText">Início</div>
+</div>
+
+<div class="container" id="formContainer"></div>
+
+<div class="nav-buttons">
+  <div class="nav-buttons-inner">
+    <button class="btn btn-ghost" id="btnBack" onclick="navigate(-1)">← Voltar</button>
+    <button class="btn btn-primary" id="btnNext" onclick="navigate(1)">Continuar →</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// GOOGLE SHEETS INTEGRATION
+// Cole aqui a URL do seu Google Apps Script (veja instruções no arquivo google-apps-script.js)
+// ═══════════════════════════════════════
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby15Zs3RJE6FYsMeVGvIym5E-ivwap8PB5l--uyDALCzeR1GNJzc1maX5ZvAqmpiT_1Ig/exec';
+
+// ═══════════════════════════════════════
+// FORM DATA DEFINITION
+// ═══════════════════════════════════════
+
+const sections = [
+  // ── COVER ──
+  {
+    type: 'statement',
+    sectionLabel: null,
+    content: `
+      <div style="text-align:center; padding: 40px 0 20px;">
+        <div style="font-size:42px; font-weight:700; color:var(--dark); letter-spacing:-0.03em; margin-bottom:8px;">GeneAI</div>
+        <div style="font-size:15px; color:var(--primary); font-weight:600; margin-bottom:32px;">PESQUISA DE VALIDAÇÃO</div>
+        <div style="width:60px; height:3px; background:var(--primary); margin:0 auto 32px;"></div>
+        <p style="font-size:17px; color:var(--medium); line-height:1.7; max-width:440px; margin:0 auto 12px;">
+          Estamos desenvolvendo uma plataforma de apoio à decisão clínica para médicos geneticistas.
+        </p>
+        <p style="font-size:17px; color:var(--primary); font-weight:600; margin-bottom:40px;">
+          Onde o laudo do laboratório termina, o GeneAI começa.
+        </p>
+        <div style="display:flex; gap:24px; justify-content:center; font-size:14px; color:var(--light);">
+          <span>⏱ 15-20 min</span>
+          <span>🔒 Confidencial</span>
+        </div>
+      </div>
+    `
+  },
+
+  // ── SECTION 1: SOBRE VOCÊ ──
+  { type: 'text', sectionLabel: 'Sobre você', qNum: 1, question: 'Qual é a sua especialidade e área de atuação principal?', hint: 'Ex: Genética médica clínica, oncogenética, genética perinatal, doenças raras...', required: true, key: 'specialty' },
+
+  { type: 'radio', sectionLabel: 'Sobre você', qNum: 2, question: 'Em que tipo de instituição você trabalha?', required: true, key: 'institution', options: ['Consultório particular', 'Clínica especializada', 'Hospital privado', 'Hospital universitário / público', 'Laboratório de genética', 'SUS (ambulatório)', 'Outro'], followUp: { trigger: 'Outro', type: 'text', hint: 'Especifique o tipo de instituição', key: 'institution_other' } },
+
+  { type: 'number', sectionLabel: 'Sobre você', qNum: 3, question: 'Quantos pacientes você atende por semana, em média?', hint: null, required: true, key: 'patients_week' },
+
+  { type: 'radio', sectionLabel: 'Sobre você', qNum: 4, question: 'Você trabalha sozinho(a) ou em equipe?', required: true, key: 'team', options: ['Sozinho(a)', 'Em equipe'], followUp: { trigger: 'Em equipe', type: 'text', hint: 'Quantos profissionais? (Ex: 3 geneticistas + 2 assessores)', key: 'team_size' } },
+
+  // ── SECTION 2: AS DORES ──
+  {
+    type: 'statement',
+    sectionLabel: 'As dores que identificamos',
+    content: `
+      <div class="statement">
+        Identificamos 5 dores recorrentes na rotina de geneticistas clínicos. Gostaríamos que você avaliasse se fazem sentido na sua realidade.
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="option" style="cursor:default; border-color:var(--border);">
+          <div style="background:var(--primary); color:white; width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0;">1</div>
+          <div><strong>Correlação fenótipo-genótipo é manual e lenta</strong><br><span style="font-size:13px; color:var(--light);">Consultar OMIM, Orphanet, GeneReviews manualmente para cruzar sintomas com síndromes.</span></div>
+        </div>
+        <div class="option" style="cursor:default; border-color:var(--border);">
+          <div style="background:var(--primary); color:white; width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0;">2</div>
+          <div><strong>O laudo chega, mas a correlação clínica fica por sua conta</strong><br><span style="font-size:13px; color:var(--light);">Variantes classificadas pelo lab, mas sem ferramenta para correlacionar com o quadro do paciente.</span></div>
+        </div>
+        <div class="option" style="cursor:default; border-color:var(--border);">
+          <div style="background:var(--primary); color:white; width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0;">3</div>
+          <div><strong>Dados clínicos estão dispersos</strong><br><span style="font-size:13px; color:var(--light);">PDFs de labs diferentes, prontuários, papel, heredogramas à mão, e-mails.</span></div>
+        </div>
+        <div class="option" style="cursor:default; border-color:var(--border);">
+          <div style="background:var(--primary); color:white; width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0;">4</div>
+          <div><strong>Atualização científica constante</strong><br><span style="font-size:13px; color:var(--light);">Novas associações gene-doença publicadas semanalmente que mudam condutas.</span></div>
+        </div>
+        <div class="option" style="cursor:default; border-color:var(--border);">
+          <div style="background:var(--primary); color:white; width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0;">5</div>
+          <div><strong>Geração de laudos de aconselhamento é repetitiva</strong><br><span style="font-size:13px; color:var(--light);">Tempo consumido escrevendo laudos que poderia ir para o paciente.</span></div>
+        </div>
+      </div>
+    `
+  },
+
+  { type: 'textarea', sectionLabel: 'Validação das dores', qNum: 5, question: 'Ordene essas dores da MAIS intensa para a MENOS intensa na sua rotina.', hint: 'Use os números: 1, 2, 3, 4, 5 (ex: "2, 1, 3, 5, 4")', required: true, key: 'pain_ranking' },
+
+  { type: 'textarea', sectionLabel: 'Validação das dores', qNum: 6, question: 'Existe alguma dor importante que NÃO listamos?', hint: 'O que mais consome seu tempo ou gera frustração na rotina clínica?', required: false, key: 'pain_missing' },
+
+  { type: 'text', sectionLabel: 'Validação das dores', qNum: 7, question: 'Quanto do seu tempo por paciente é gasto em tarefas administrativas vs. raciocínio clínico?', hint: 'Ex: 40% administrativo, 60% clínico', required: true, key: 'admin_vs_clinical' },
+
+  { type: 'textarea', sectionLabel: 'Validação das dores', qNum: 8, question: 'Você já deixou de considerar uma hipótese diagnóstica por falta de tempo para pesquisar?', hint: 'Se sim, pode descrever brevemente a situação?', required: false, key: 'missed_hypothesis' },
+
+  // ── SECTION 3: FERRAMENTAS ATUAIS ──
+  { type: 'checkbox', sectionLabel: 'Ferramentas atuais', qNum: 9, question: 'Quais ferramentas/softwares você usa na rotina clínica?', hint: 'Selecione todas que se aplicam.', required: true, key: 'current_tools', options: ['Prontuário eletrônico (PEP)', 'OMIM', 'PubMed', 'ClinVar', 'GeneReviews', 'Orphanet', 'Phenomizer / PhenoTips', 'Franklin (QIAGEN)', 'Face2Gene', 'Planilhas (Excel/Sheets)', 'ChatGPT / Gemini / IA genérica', 'Papel / caderno', 'Outro'] },
+
+  { type: 'checkbox', sectionLabel: 'Ferramentas atuais', qNum: 10, question: 'Como você recebe os laudos dos laboratórios hoje?', required: true, key: 'lab_report_format', options: ['PDF por e-mail', 'Portal online do laboratório', 'Arquivo VCF', 'Papel físico / correio', 'Integração com prontuário eletrônico', 'Outro'] },
+
+  { type: 'textarea', sectionLabel: 'Ferramentas atuais', qNum: 11, question: 'Quando o laudo chega, qual é o seu fluxo para correlacionar as variantes com o quadro clínico?', hint: 'Ex: abre OMIM, ClinVar e PubMed em abas separadas, anota no prontuário, consulta colegas...', required: true, key: 'post_report_workflow' },
+
+  { type: 'radio', sectionLabel: 'Ferramentas atuais', qNum: 12, question: 'Você usa alguma ferramenta de IA no contexto clínico?', required: true, key: 'uses_ai', options: ['Sim, regularmente', 'Sim, ocasionalmente', 'Já experimentei mas parei', 'Nunca usei'], followUp: { trigger: ['Sim, regularmente', 'Sim, ocasionalmente', 'Já experimentei mas parei'], type: 'textarea', hint: 'Para quê usa/usou? O que funciona e o que não funciona?', key: 'ai_details' } },
+
+  { type: 'textarea', sectionLabel: 'Ferramentas atuais', qNum: 13, question: 'O que você mais gosta nas ferramentas que usa hoje?', required: false, key: 'tools_likes' },
+
+  { type: 'textarea', sectionLabel: 'Ferramentas atuais', qNum: 14, question: 'O que mais te frustra nas ferramentas atuais?', hint: 'Lentidão, falta de integração, interface confusa, custo, etc.', required: false, key: 'tools_frustrations' },
+
+  { type: 'radio', sectionLabel: 'Ferramentas atuais', qNum: 15, question: 'Você já pagou por algum software específico para genética?', required: true, key: 'paid_software', options: ['Sim', 'Não'], followUp: { trigger: 'Sim', type: 'text', hint: 'Qual software e quanto paga/pagou?', key: 'paid_software_details' } },
+
+  // ── SECTION 4: A IDEIA ──
+  {
+    type: 'statement',
+    sectionLabel: 'A ideia: GeneAI',
+    content: `
+      <div class="statement">
+        <strong>Onde o laudo do laboratório termina, o GeneAI começa.</strong><br><br>
+        A plataforma centralizaria os dados do paciente genético e usaria IA especializada para apoiar o raciocínio clínico — sem substituir o médico, sem reprocessar dados do laboratório, focando na correlação clínica e tomada de decisão.
+      </div>
+      <div class="statement-features">
+        <div class="feature-item"><div class="feature-icon">🧬</div><div><div class="feature-name">Diagnóstico diferencial com IA</div><div class="feature-desc">Insira fenótipos HPO e receba síndromes candidatas com referências OMIM e literatura.</div></div></div>
+        <div class="feature-item"><div class="feature-icon">📋</div><div><div class="feature-name">Correlação variantes × clínica</div><div class="feature-desc">Upload do PDF do laudo → extração automática → correlação com os fenótipos do paciente.</div></div></div>
+        <div class="feature-item"><div class="feature-icon">📄</div><div><div class="feature-name">Importação inteligente de laudos</div><div class="feature-desc">O sistema lê o PDF e extrai variantes, classificações e conclusões automaticamente.</div></div></div>
+        <div class="feature-item"><div class="feature-icon">🔍</div><div><div class="feature-name">Busca unificada de literatura</div><div class="feature-desc">PubMed, OMIM, ClinVar, ClinGen e GeneReviews num só lugar, com resumos da IA.</div></div></div>
+        <div class="feature-item"><div class="feature-icon">📊</div><div><div class="feature-name">Prontuário genético</div><div class="feature-desc">Timeline visual com consultas, exames, variantes de todos os laudos, heredograma.</div></div></div>
+        <div class="feature-item"><div class="feature-icon">📝</div><div><div class="feature-name">Laudos de aconselhamento</div><div class="feature-desc">Templates preenchidos automaticamente, revisão pelo médico, export em PDF.</div></div></div>
+        <div class="feature-item"><div class="feature-icon">💬</div><div><div class="feature-name">Chat com IA especializada</div><div class="feature-desc">Converse com uma IA que já conhece o paciente em contexto.</div></div></div>
+      </div>
+      <div class="warning-box">
+        ⚠️ A IA nunca daria diagnósticos definitivos e nunca reclassificaria variantes do laboratório. Toda sugestão seria hipótese com nível de evidência e referências para o médico validar.
+      </div>
+    `
+  },
+
+  { type: 'scale', sectionLabel: 'Feedback sobre a solução', qNum: 16, question: 'De 1 a 10, qual o seu interesse em uma ferramenta como essa?', hint: null, required: true, key: 'interest_score', min: 1, max: 10, labelMin: 'Nenhum interesse', labelMax: 'Problema real e urgente' },
+
+  { type: 'textarea', sectionLabel: 'Feedback sobre a solução', qNum: 17, question: 'Qual funcionalidade te interessou MAIS? E qual MENOS?', required: true, key: 'feature_ranking' },
+
+  { type: 'textarea', sectionLabel: 'Feedback sobre a solução', qNum: 18, question: 'Existe alguma funcionalidade que você sente falta nessa lista?', hint: 'Algo que faria você pensar: "se tivesse isso, eu usaria com certeza."', required: false, key: 'feature_missing' },
+
+  { type: 'textarea', sectionLabel: 'Feedback sobre a solução', qNum: 19, question: 'A importação inteligente de laudos (PDF → extração automática) seria útil? Quais labs você mais usa?', hint: 'Ex: Mendelics, Fleury, Dasa, GeneDx, lab do hospital...', required: true, key: 'lab_import_feedback' },
+
+  { type: 'checkbox', sectionLabel: 'Feedback sobre a solução', qNum: 20, question: 'Quais bases de dados são inegociáveis para embasar sugestões de IA?', required: true, key: 'required_databases', options: ['OMIM', 'ClinVar', 'PubMed', 'GeneReviews', 'Orphanet', 'ClinGen', 'gnomAD', 'DECIPHER', 'HGMD', 'Outra'] },
+
+  { type: 'radio', sectionLabel: 'Feedback sobre a solução', qNum: 21, question: 'Você confiaria em sugestões de IA para apoiar seu raciocínio clínico?', required: true, key: 'ai_trust', options: ['Sim, para a maioria das tarefas', 'Sim, mas só para triagem/priorização', 'Sim, mas só para literatura e resumos', 'Teria reservas significativas', 'Não confiaria'], followUp: { trigger: ['Sim, para a maioria das tarefas', 'Sim, mas só para triagem/priorização', 'Sim, mas só para literatura e resumos', 'Teria reservas significativas'], type: 'textarea', hint: 'Em quais contextos confiaria e em quais não?', key: 'ai_trust_details' } },
+
+  { type: 'radio', sectionLabel: 'Feedback sobre a solução', qNum: 22, question: 'O heredograma digital seria útil para você?', required: true, key: 'pedigree_useful', options: ['Sim, muito útil', 'Útil, mas não essencial', 'Indiferente', 'Não seria útil'], followUp: { trigger: ['Sim, muito útil', 'Útil, mas não essencial'], type: 'text', hint: 'Que ferramenta usa para heredograma hoje?', key: 'pedigree_tool' } },
+
+  // ── SECTION 5: INTEGRAÇÃO ──
+  { type: 'radio', sectionLabel: 'Integração e Segurança', qNum: 23, question: 'A ferramenta precisaria se integrar ao sistema que você já usa?', required: true, key: 'integration_need', options: ['Sim, integração via API é obrigatória', 'Preferiria integração, mas usaria como paralela', 'Usaria como plataforma separada sem problemas'] },
+
+  { type: 'radio', sectionLabel: 'Integração e Segurança', qNum: 24, question: 'Qual o nível de exigência da sua instituição em relação à privacidade de dados ao usar IA?', required: true, key: 'privacy_requirement', options: ['Processamento 100% local (sem nuvem)', 'Nuvem brasileira com conformidade LGPD', 'Nuvem internacional com DPA assinado', 'Não sei / nunca foi discutido', 'Outro'], followUp: { trigger: 'Outro', type: 'text', hint: 'Especifique a exigência de privacidade', key: 'privacy_other' } },
+
+  // ── SECTION 6: NEGÓCIO ──
+  { type: 'radio', sectionLabel: 'Modelo de negócio', qNum: 25, question: 'Quanto estaria disposto(a) a pagar por mês por uma ferramenta assim?', required: true, key: 'willingness_to_pay', options: ['Até R$ 200/mês', 'R$ 200 – 500/mês', 'R$ 500 – 1.000/mês', 'R$ 1.000 – 2.000/mês', 'Acima de R$ 2.000/mês', 'Não pagaria'] },
+
+  { type: 'radio', sectionLabel: 'Modelo de negócio', qNum: 26, question: 'Quem toma a decisão de compra de software na sua instituição?', required: true, key: 'purchase_decision', options: ['Eu mesmo(a)', 'Coordenação médica', 'Diretoria / gestão', 'TI da instituição', 'Licitação / processo público', 'Outro'], followUp: { trigger: 'Outro', type: 'text', hint: 'Especifique quem decide', key: 'purchase_decision_other' } },
+
+  { type: 'textarea', sectionLabel: 'Modelo de negócio', qNum: 27, question: 'O que te faria testar esse produto? E o que te faria parar de usar?', hint: 'Ex: indicação de colega, trial gratuito, publicação científica, etc.', required: false, key: 'adoption_triggers' },
+
+  { type: 'radio', sectionLabel: 'Modelo de negócio', qNum: 28, question: 'Preferência de plataforma?', required: true, key: 'platform_preference', options: ['Web (navegador)', 'App mobile', 'App desktop', 'Tanto faz'] },
+
+  // ── SECTION 7: ABERTO ──
+  { type: 'textarea', sectionLabel: 'Espaço aberto', qNum: 29, question: 'Há algo mais que gostaria de compartilhar?', hint: 'Críticas, sugestões, preocupações — qualquer coisa é valiosa.', required: false, key: 'open_feedback' },
+
+  // ── CONTATO ──
+  { type: 'contact', sectionLabel: 'Seus dados', question: 'Para enviarmos os resultados e próximos passos:', required: true },
+
+  // ── THANK YOU ──
+  { type: 'thankyou' }
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let currentSection = 0;
+const responses = {};
+
+// ═══════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════
+function render() {
+  const container = document.getElementById('formContainer');
+  const s = sections[currentSection];
+  let html = '';
+
+  if (s.sectionLabel) {
+    html += `<div class="section-label">${s.sectionLabel}</div>`;
+  }
+
+  if (s.type === 'statement') {
+    html += s.content;
+  } else if (s.type === 'thankyou') {
+    html += `
+      <div class="thank-you">
+        <div style="font-size:48px; margin-bottom:16px;">🙏</div>
+        <h2>Muito obrigado!</h2>
+        <p>Seu feedback é fundamental para construirmos uma ferramenta que realmente faça diferença na sua rotina.</p>
+        <button class="btn btn-export" onclick="exportData()">📥 Baixar minhas respostas (JSON)</button>
+      </div>
+    `;
+  } else if (s.type === 'contact') {
+    html += `
+      <div class="question-text">${s.question}</div>
+      <div style="margin-top:24px; display:flex; flex-direction:column; gap:14px;">
+        <div>
+          <label style="font-size:13px; font-weight:500; color:var(--medium); margin-bottom:6px; display:block;">Nome *</label>
+          <input type="text" id="contact_name" placeholder="Seu nome completo" value="${responses.contact_name||''}" oninput="responses.contact_name=this.value">
+        </div>
+        <div>
+          <label style="font-size:13px; font-weight:500; color:var(--medium); margin-bottom:6px; display:block;">E-mail *</label>
+          <input type="email" id="contact_email" placeholder="seu@email.com" value="${responses.contact_email||''}" oninput="responses.contact_email=this.value">
+        </div>
+        <div>
+          <label style="font-size:13px; font-weight:500; color:var(--medium); margin-bottom:6px; display:block;">WhatsApp (opcional)</label>
+          <input type="text" id="contact_whatsapp" placeholder="(00) 00000-0000" value="${responses.contact_whatsapp||''}" oninput="responses.contact_whatsapp=this.value">
+        </div>
+      </div>
+    `;
+  } else {
+    if (s.qNum) html += `<div class="question-number">Pergunta ${s.qNum} de 29</div>`;
+    html += `<div class="question-text">${s.question}</div>`;
+    if (s.hint) html += `<div class="question-hint">${s.hint}</div>`;
+    if (!s.hint) html += `<div style="height:16px;"></div>`;
+
+    if (s.type === 'text') {
+      html += `<input type="text" id="input_${s.key}" value="${responses[s.key]||''}" placeholder="Sua resposta..." oninput="responses['${s.key}']=this.value">`;
+    } else if (s.type === 'number') {
+      html += `<input type="number" id="input_${s.key}" value="${responses[s.key]||''}" placeholder="Ex: 25" oninput="responses['${s.key}']=this.value">`;
+    } else if (s.type === 'textarea') {
+      html += `<textarea id="input_${s.key}" placeholder="Sua resposta..." oninput="responses['${s.key}']=this.value">${responses[s.key]||''}</textarea>`;
+    } else if (s.type === 'radio') {
+      html += `<div class="options">`;
+      s.options.forEach(opt => {
+        const sel = responses[s.key] === opt ? 'selected' : '';
+        html += `<div class="option ${sel}" onclick="selectRadio('${s.key}', '${opt.replace(/'/g, "\\'")}', this)">
+          <div class="check"></div>
+          <span>${opt}</span>
+        </div>`;
+      });
+      html += `</div>`;
+      if (s.followUp) {
+        const triggers = Array.isArray(s.followUp.trigger) ? s.followUp.trigger : [s.followUp.trigger];
+        const visible = triggers.includes(responses[s.key]) ? 'visible' : '';
+        const val = responses[s.followUp.key] || '';
+        html += `<div class="other-field ${visible}" id="followup_${s.key}">`;
+        if (s.followUp.type === 'textarea') {
+          html += `<textarea placeholder="${s.followUp.hint||'Detalhes...'}" oninput="responses['${s.followUp.key}']=this.value">${val}</textarea>`;
+        } else {
+          html += `<input type="text" placeholder="${s.followUp.hint||'Detalhes...'}" value="${val}" oninput="responses['${s.followUp.key}']=this.value">`;
+        }
+        html += `</div>`;
+      }
+    } else if (s.type === 'checkbox') {
+      if (!responses[s.key]) responses[s.key] = [];
+      html += `<div class="options">`;
+      s.options.forEach(opt => {
+        const sel = responses[s.key].includes(opt) ? 'selected' : '';
+        html += `<div class="option checkbox-option ${sel}" onclick="toggleCheckbox('${s.key}', '${opt.replace(/'/g, "\\'")}', this)">
+          <div class="check"></div>
+          <span>${opt}</span>
+        </div>`;
+      });
+      html += `</div>`;
+      if (s.options.includes('Outro') || s.options.includes('Outra')) {
+        const vis = (responses[s.key].includes('Outro') || responses[s.key].includes('Outra')) ? 'visible' : '';
+        html += `<div class="other-field ${vis}" id="other_${s.key}">
+          <input type="text" placeholder="Especifique..." value="${responses[s.key+'_other']||''}" oninput="responses['${s.key}_other']=this.value">
+        </div>`;
+      }
+    } else if (s.type === 'scale') {
+      html += `<div class="scale-container">`;
+      for (let i = s.min; i <= s.max; i++) {
+        const sel = responses[s.key] == i ? 'selected' : '';
+        html += `<div class="scale-option ${sel}" onclick="selectScale('${s.key}', ${i}, this)">${i}</div>`;
+      }
+      html += `</div><div class="scale-labels"><span>${s.labelMin}</span><span>${s.labelMax}</span></div>`;
+    }
+  }
+
+  container.innerHTML = `<div class="section active">${html}</div>`;
+  updateProgress();
+  updateButtons();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function selectRadio(key, value, el) {
+  responses[key] = value;
+  el.parentElement.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  const s = sections[currentSection];
+  if (s.followUp) {
+    const triggers = Array.isArray(s.followUp.trigger) ? s.followUp.trigger : [s.followUp.trigger];
+    const fu = document.getElementById('followup_' + key);
+    if (fu) fu.classList.toggle('visible', triggers.includes(value));
+  }
+}
+
+function toggleCheckbox(key, value, el) {
+  if (!responses[key]) responses[key] = [];
+  const idx = responses[key].indexOf(value);
+  if (idx >= 0) { responses[key].splice(idx, 1); el.classList.remove('selected'); }
+  else { responses[key].push(value); el.classList.add('selected'); }
+  const otherField = document.getElementById('other_' + key);
+  if (otherField) otherField.classList.toggle('visible', responses[key].includes('Outro') || responses[key].includes('Outra'));
+}
+
+function selectScale(key, value, el) {
+  responses[key] = value;
+  el.parentElement.querySelectorAll('.scale-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function updateProgress() {
+  const pct = (currentSection / (sections.length - 1)) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+  const s = sections[currentSection];
+  if (s.type === 'thankyou') {
+    document.getElementById('progressText').textContent = 'Concluído ✓';
+  } else if (s.sectionLabel) {
+    document.getElementById('progressText').textContent = s.sectionLabel;
+  } else if (currentSection === 0) {
+    document.getElementById('progressText').textContent = 'Início';
+  }
+}
+
+function updateButtons() {
+  const s = sections[currentSection];
+  document.getElementById('btnBack').style.display = currentSection === 0 ? 'none' : 'inline-flex';
+  if (s.type === 'thankyou') {
+    document.getElementById('btnNext').style.display = 'none';
+    document.getElementById('btnBack').style.display = 'none';
+  } else {
+    document.getElementById('btnNext').style.display = 'inline-flex';
+    document.getElementById('btnNext').textContent = currentSection === sections.length - 2 ? 'Enviar ✓' : 'Continuar →';
+  }
+}
+
+function navigate(dir) {
+  if (dir === 1) {
+    if (!validate()) {
+      showError();
+      return;
+    }
+    hideError();
+    // Se estamos na penúltima seção (contato), submeter antes de ir para thank you
+    if (currentSection === sections.length - 2) {
+      submitForm();
+      return;
+    }
+  }
+  currentSection = Math.max(0, Math.min(sections.length - 1, currentSection + dir));
+  render();
+}
+
+function validate() {
+  const s = sections[currentSection];
+  if (s.type === 'statement' || s.type === 'thankyou') return true;
+  if (!s.required) return true;
+  if (s.type === 'contact') {
+    if (!responses.contact_name || !responses.contact_email) return false;
+    // Validar formato de e-mail
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(responses.contact_email);
+  }
+  if (s.type === 'checkbox') return responses[s.key] && responses[s.key].length > 0;
+  if (s.type === 'radio') return !!responses[s.key];
+  if (s.type === 'scale') return responses[s.key] !== undefined;
+  return !!responses[s.key];
+}
+
+function showError() {
+  let msg = 'Por favor, preencha este campo para continuar.';
+  const s = sections[currentSection];
+  if (s.type === 'contact') {
+    if (!responses.contact_name) msg = 'Por favor, informe seu nome.';
+    else if (!responses.contact_email) msg = 'Por favor, informe seu e-mail.';
+    else msg = 'Por favor, informe um e-mail válido.';
+  } else if (s.type === 'radio') {
+    msg = 'Por favor, selecione uma opção.';
+  } else if (s.type === 'checkbox') {
+    msg = 'Por favor, selecione pelo menos uma opção.';
+  } else if (s.type === 'scale') {
+    msg = 'Por favor, selecione um valor na escala.';
+  }
+  let errEl = document.getElementById('errorMsg');
+  if (!errEl) {
+    errEl = document.createElement('div');
+    errEl.id = 'errorMsg';
+    errEl.className = 'error-message';
+    document.querySelector('.section.active').appendChild(errEl);
+  }
+  errEl.textContent = msg;
+  errEl.classList.add('visible');
+}
+
+function hideError() {
+  const errEl = document.getElementById('errorMsg');
+  if (errEl) errEl.classList.remove('visible');
+}
+
+async function submitForm() {
+  const loading = document.getElementById('loadingOverlay');
+  loading.classList.add('visible');
+
+  // Adicionar metadados
+  responses._timestamp = new Date().toISOString();
+  responses._userAgent = navigator.userAgent;
+
+  try {
+    if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'COLE_SUA_URL_AQUI') {
+      const res = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(responses)
+      });
+      // no-cors retorna opaque response, mas os dados são enviados
+    }
+    // Salvar também no localStorage como backup
+    const saved = JSON.parse(localStorage.getItem('geneai_responses') || '[]');
+    saved.push({ ...responses });
+    localStorage.setItem('geneai_responses', JSON.stringify(saved));
+
+    loading.classList.remove('visible');
+    currentSection = sections.length - 1;
+    render();
+  } catch (err) {
+    loading.classList.remove('visible');
+    // Mesmo com erro, salvar localmente e avançar
+    const saved = JSON.parse(localStorage.getItem('geneai_responses') || '[]');
+    saved.push({ ...responses });
+    localStorage.setItem('geneai_responses', JSON.stringify(saved));
+
+    currentSection = sections.length - 1;
+    render();
+    console.error('Erro ao enviar:', err);
+  }
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(responses, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `geneai-validacao-${responses.contact_name || 'resposta'}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Keyboard nav ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') navigate(1);
+});
+
+// ── Init ──
+render();
+</script>
+</body>
+</html>
