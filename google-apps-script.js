@@ -87,6 +87,7 @@ function doPost(e) {
       sheet.setFrozenRows(1);
     }
 
+    // Suporta tanto application/json quanto text/plain (usado com mode: 'no-cors')
     const data = JSON.parse(e.postData.contents);
 
     // Montar linha na ordem das colunas

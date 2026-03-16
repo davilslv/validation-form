@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GeneAI — Pesquisa de Validação</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 
@@ -326,10 +327,11 @@ input::placeholder, textarea::placeholder {
 .feature-item:last-child { border-bottom: none; }
 
 .feature-icon {
-  font-size: 18px;
   flex-shrink: 0;
   width: 28px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .feature-name {
@@ -579,9 +581,9 @@ const sections = [
         <p style="font-size:17px; color:var(--primary); font-weight:600; margin-bottom:40px;">
           Onde o laudo do laboratório termina, o GeneAI começa.
         </p>
-        <div style="display:flex; gap:24px; justify-content:center; font-size:14px; color:var(--light);">
-          <span>⏱ 15-20 min</span>
-          <span>🔒 Confidencial</span>
+        <div style="display:flex; gap:24px; justify-content:center; font-size:14px; color:var(--light); align-items:center;">
+          <span style="display:inline-flex; align-items:center; gap:6px;"><i data-lucide="clock" style="width:16px; height:16px;"></i> 15-20 min</span>
+          <span style="display:inline-flex; align-items:center; gap:6px;"><i data-lucide="shield-check" style="width:16px; height:16px;"></i> Confidencial</span>
         </div>
       </div>
     `
@@ -666,16 +668,16 @@ const sections = [
         A plataforma centralizaria os dados do paciente genético e usaria IA especializada para apoiar o raciocínio clínico — sem substituir o médico, sem reprocessar dados do laboratório, focando na correlação clínica e tomada de decisão.
       </div>
       <div class="statement-features">
-        <div class="feature-item"><div class="feature-icon">🧬</div><div><div class="feature-name">Diagnóstico diferencial com IA</div><div class="feature-desc">Insira fenótipos HPO e receba síndromes candidatas com referências OMIM e literatura.</div></div></div>
-        <div class="feature-item"><div class="feature-icon">📋</div><div><div class="feature-name">Correlação variantes × clínica</div><div class="feature-desc">Upload do PDF do laudo → extração automática → correlação com os fenótipos do paciente.</div></div></div>
-        <div class="feature-item"><div class="feature-icon">📄</div><div><div class="feature-name">Importação inteligente de laudos</div><div class="feature-desc">O sistema lê o PDF e extrai variantes, classificações e conclusões automaticamente.</div></div></div>
-        <div class="feature-item"><div class="feature-icon">🔍</div><div><div class="feature-name">Busca unificada de literatura</div><div class="feature-desc">PubMed, OMIM, ClinVar, ClinGen e GeneReviews num só lugar, com resumos da IA.</div></div></div>
-        <div class="feature-item"><div class="feature-icon">📊</div><div><div class="feature-name">Prontuário genético</div><div class="feature-desc">Timeline visual com consultas, exames, variantes de todos os laudos, heredograma.</div></div></div>
-        <div class="feature-item"><div class="feature-icon">📝</div><div><div class="feature-name">Laudos de aconselhamento</div><div class="feature-desc">Templates preenchidos automaticamente, revisão pelo médico, export em PDF.</div></div></div>
-        <div class="feature-item"><div class="feature-icon">💬</div><div><div class="feature-name">Chat com IA especializada</div><div class="feature-desc">Converse com uma IA que já conhece o paciente em contexto.</div></div></div>
+        <div class="feature-item"><div class="feature-icon"><i data-lucide="dna" style="width:20px; height:20px; color:var(--primary);"></i></div><div><div class="feature-name">Diagnóstico diferencial com IA</div><div class="feature-desc">Insira fenótipos HPO e receba síndromes candidatas com referências OMIM e literatura.</div></div></div>
+        <div class="feature-item"><div class="feature-icon"><i data-lucide="git-compare-arrows" style="width:20px; height:20px; color:var(--primary);"></i></div><div><div class="feature-name">Correlação variantes × clínica</div><div class="feature-desc">Upload do PDF do laudo → extração automática → correlação com os fenótipos do paciente.</div></div></div>
+        <div class="feature-item"><div class="feature-icon"><i data-lucide="file-scan" style="width:20px; height:20px; color:var(--primary);"></i></div><div><div class="feature-name">Importação inteligente de laudos</div><div class="feature-desc">O sistema lê o PDF e extrai variantes, classificações e conclusões automaticamente.</div></div></div>
+        <div class="feature-item"><div class="feature-icon"><i data-lucide="search" style="width:20px; height:20px; color:var(--primary);"></i></div><div><div class="feature-name">Busca unificada de literatura</div><div class="feature-desc">PubMed, OMIM, ClinVar, ClinGen e GeneReviews num só lugar, com resumos da IA.</div></div></div>
+        <div class="feature-item"><div class="feature-icon"><i data-lucide="layout-dashboard" style="width:20px; height:20px; color:var(--primary);"></i></div><div><div class="feature-name">Prontuário genético</div><div class="feature-desc">Timeline visual com consultas, exames, variantes de todos os laudos, heredograma.</div></div></div>
+        <div class="feature-item"><div class="feature-icon"><i data-lucide="file-text" style="width:20px; height:20px; color:var(--primary);"></i></div><div><div class="feature-name">Laudos de aconselhamento</div><div class="feature-desc">Templates preenchidos automaticamente, revisão pelo médico, export em PDF.</div></div></div>
+        <div class="feature-item"><div class="feature-icon"><i data-lucide="message-circle" style="width:20px; height:20px; color:var(--primary);"></i></div><div><div class="feature-name">Chat com IA especializada</div><div class="feature-desc">Converse com uma IA que já conhece o paciente em contexto.</div></div></div>
       </div>
       <div class="warning-box">
-        ⚠️ A IA nunca daria diagnósticos definitivos e nunca reclassificaria variantes do laboratório. Toda sugestão seria hipótese com nível de evidência e referências para o médico validar.
+        <span style="display:inline-flex; align-items:center; gap:6px;"><i data-lucide="triangle-alert" style="width:16px; height:16px; flex-shrink:0;"></i> A IA nunca daria diagnósticos definitivos e nunca reclassificaria variantes do laboratório. Toda sugestão seria hipótese com nível de evidência e referências para o médico validar.</span>
       </div>
     `
   },
@@ -738,10 +740,10 @@ function render() {
   } else if (s.type === 'thankyou') {
     html += `
       <div class="thank-you">
-        <div style="font-size:48px; margin-bottom:16px;">🙏</div>
+        <div style="margin-bottom:16px;"><i data-lucide="heart-handshake" style="width:48px; height:48px; color:var(--primary);"></i></div>
         <h2>Muito obrigado!</h2>
         <p>Seu feedback é fundamental para construirmos uma ferramenta que realmente faça diferença na sua rotina.</p>
-        <button class="btn btn-export" onclick="exportData()">📥 Baixar minhas respostas (JSON)</button>
+        <button class="btn btn-export" onclick="exportData()" style="display:inline-flex; align-items:center; gap:8px;"><i data-lucide="download" style="width:18px; height:18px;"></i> Baixar minhas respostas (JSON)</button>
       </div>
     `;
   } else if (s.type === 'contact') {
@@ -829,6 +831,8 @@ function render() {
     const ta = container.querySelector('textarea');
     if (ta && responses[s.key]) ta.value = responses[s.key];
   }
+  // Inicializar ícones Lucide após inserir HTML
+  if (typeof lucide !== 'undefined') lucide.createIcons();
   updateProgress();
   updateButtons();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -962,13 +966,14 @@ async function submitForm() {
 
   try {
     if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== 'COLE_SUA_URL_AQUI') {
-      const res = await fetch(GOOGLE_SCRIPT_URL, {
+      await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(responses)
       });
-      // no-cors retorna opaque response, mas os dados são enviados
+      // no-cors só permite content-types simples (text/plain, form-urlencoded, multipart)
+      // application/json é bloqueado silenciosamente pelo browser em modo no-cors
     }
     // Salvar também no localStorage como backup
     const saved = JSON.parse(localStorage.getItem('geneai_responses') || '[]');
