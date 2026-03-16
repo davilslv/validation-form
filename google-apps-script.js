@@ -26,7 +26,7 @@
 //
 // ============================================================
 
-const SPREADSHEET_ID = 'COLE_O_ID_DA_SUA_PLANILHA_AQUI';
+const SPREADSHEET_ID = '1oM05wzebFp1t_Xsr0aC3p5vDvfy2wyIzYywYWNEjt6c';
 
 // Colunas que serão criadas na planilha (na ordem)
 const COLUMNS = [
