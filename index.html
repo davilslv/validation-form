@@ -449,17 +449,6 @@ input::placeholder, textarea::placeholder {
   margin: 0 auto 32px;
 }
 
-.btn-export {
-  background: var(--accent);
-  color: white;
-  padding: 14px 32px;
-  font-size: 15px;
-}
-
-.btn-export:hover {
-  background: #0C8C60;
-}
-
 /* ── Other field ── */
 .other-field {
   margin-top: 8px;
@@ -740,7 +729,6 @@ function render() {
         <div style="margin-bottom:16px;"><i data-lucide="heart-handshake" style="width:48px; height:48px; color:var(--primary);"></i></div>
         <h2>Muito obrigado!</h2>
         <p>Seu feedback é fundamental para construirmos uma ferramenta que realmente faça diferença na sua rotina.</p>
-        <button class="btn btn-export" onclick="exportData()" style="display:inline-flex; align-items:center; gap:8px;"><i data-lucide="download" style="width:18px; height:18px;"></i> Baixar minhas respostas (JSON)</button>
       </div>
     `;
   } else if (s.type === 'contact') {
@@ -991,16 +979,6 @@ async function submitForm() {
     render();
     console.error('Erro ao enviar:', err);
   }
-}
-
-function exportData() {
-  const blob = new Blob([JSON.stringify(responses, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `geneai-validacao-${responses.contact_name || 'resposta'}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
 }
 
 // ── Keyboard nav ──
